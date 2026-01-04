@@ -734,10 +734,24 @@
 
       .stage {
         grid-template-columns: 1fr;
+        height: auto;
       }
 
       .panel {
         height: auto;
+      }
+
+      .stage-screen {
+        position: static;
+        padding: 0;
+      }
+
+      .panel.hidden {
+        display: none;
+      }
+
+      .panel.active {
+        display: flex;
       }
 
       .character-stage {
