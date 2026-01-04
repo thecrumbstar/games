@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dynamic Directory Listing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    #directory-list ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    li {
+      margin: 0.5rem 0;
+    }
+    a {
+      color: #007acc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .loading {
+      font-style: italic;
+      color: #666;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Digitaldidi Games</h1>
+  <div id="directory-list">
+    <p class="loading">Loading games...</p>
+  </div>
+
+  <script>
+    const username = "digitaldidi";
+    const repo = "games";
+    const headers = {};
+    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents`;
+    fetch(apiUrl, { headers })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`GitHub API request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const dirs = data.filter(item => item.type === "dir");
+
+        const container = document.getElementById("directory-list");
+        container.innerHTML = "";
+
+        if (dirs.length === 0) {
+          container.innerHTML = "<p>No directories found.</p>";
+          return;
+        }
+
+        const ul = document.createElement("ul");
+        dirs.forEach(dir => {
+          const li = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = `${dir.name}/`; 
+          link.textContent = dir.name;
+
+          li.appendChild(link);
+          ul.appendChild(li);
+        });
+
+        container.appendChild(ul);
+      })
+      .catch((error) => {
+        const container = document.getElementById("directory-list");
+        container.innerHTML = `<p class="error">Error loading directories: ${error.message}</p>`;
+      });
+  </script>
+</body>
+</html>
